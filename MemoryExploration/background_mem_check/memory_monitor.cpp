@@ -3,19 +3,20 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <sstream>
 using namespace std;
 const size_t HEAP_SIZE = 16;
 
 size_t getMemoryKB()
 {
-    std::ofstream log("log.txt", std::ios::app);
+    // std::ofstream log("log.txt", std::ios::app);
 
     ifstream status("/proc/self/status");
     string line;
     stringstream buffer;
-    buffer << status.rdbuf();
-    log << "buffer : ";
-    log << buffer.str();
+    // buffer << status.rdbuf();
+    // log << "buffer : ";
+    // log << buffer.str();
     while (getline(status, line))
     {
         if (line.find("VmRSS:") == 0)
