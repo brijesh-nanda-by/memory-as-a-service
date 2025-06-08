@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/worker_node.dir/worker_node.cpp.o  -o worker_node 

@@ -1,0 +1,4 @@
+/users/BrijeshN/project/memory-as-a-service/DFlow/build/CMakeFiles/rebuild_cache.dir
+/users/BrijeshN/project/memory-as-a-service/DFlow/build/CMakeFiles/edit_cache.dir
+/users/BrijeshN/project/memory-as-a-service/DFlow/build/CMakeFiles/worker_node.dir
+/users/BrijeshN/project/memory-as-a-service/DFlow/build/CMakeFiles/controller.dir
