@@ -1,5 +1,5 @@
 #include "httplib.h" // For HTTP server and client
-#include "json.hpp"  // For JSON parsing and generation
+#include <nlohmann/json.hpp>  // For JSON parsing and generation
 
 #include <iostream>
 #include <string>
@@ -114,7 +114,7 @@ void handle_put(const httplib::Request& req, httplib::Response& res) {
         std::string value = data["value"].get<std::string>();
 
         json target_node_info = get_node_info_for_key(key);
-        if (target_node_info.is_empty()) {
+        if (target_node_info.empty()) {
             res.status = 500;
             res.set_content(json{{"error", "Could not determine target node for key"}}.dump(), "application/json");
             return;
@@ -165,7 +165,7 @@ void handle_get(const httplib::Request& req, httplib::Response& res) {
 
     try {
         json target_node_info = get_node_info_for_key(key);
-        if (target_node_info.is_empty()) {
+        if (target_node_info.empty()) {
             res.status = 500;
             res.set_content(json{{"error", "Could not determine target node for key"}}.dump(), "application/json");
             return;
