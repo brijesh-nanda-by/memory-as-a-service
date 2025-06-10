@@ -16,9 +16,9 @@ using json = nlohmann::json;
 
 // --- Global Worker Node State ---
 std::string g_node_id;
-std::string g_node_ip = "127.0.0.1"; // Default IP for this node
+std::string g_node_ip; // Default IP for this node
 int g_node_port;                     // Port for this node
-std::string g_controller_url = "http://127.0.0.1:5000"; // Controller's URL
+std::string g_controller_url = "http://amd235.utah.cloudlab.us:5000"; // Controller's URL
 
 // Mutex to protect the local hashmap
 std::mutex g_map_mutex;
@@ -215,10 +215,39 @@ void handle_get(const httplib::Request& req, httplib::Response& res) {
     }
 }
 
+std::string get_public_ip_address() {
+    // The URL of the external service that returns the public IP.
+    // Using http://icanhazip.com for simplicity.
+    const std::string ip_service_url = "http://icanhazip.com";
+
+    // Create an httplib client instance targeting the IP service.
+    httplib::Client cli(ip_service_url.c_str());
+
+    // Attempt to make a GET request to the root path ("/") of the service.
+    if (auto res = cli.Get("/")) {
+        // Check if the HTTP request was successful (status code 200 OK).
+        if (res->status == 200) {
+            // The response body contains the public IP address.
+            // It might include leading/trailing whitespace or newlines, so we trim them.
+            std::string public_ip = res->body;
+            public_ip.erase(0, public_ip.find_first_not_of(" \n\r\t")); // Trim leading whitespace/newlines
+            public_ip.erase(public_ip.find_last_not_of(" \n\r\t") + 1); // Trim trailing whitespace/newlines
+            return public_ip; // Return the cleaned public IP
+        } else {
+            // Log an error if the HTTP request was not successful.
+            std::cerr << "Failed to get public IP from service: HTTP status code " << res->status << std::endl;
+        }
+    } else {
+        // Log an error if there was a problem connecting to the IP service (e.g., network issue).
+        std::cerr << "Failed to connect to IP service: " << httplib::to_string(res.error()) << std::endl;
+    }
+    return ""; // Return an empty string on any failure
+}
+
 // --- Main Worker Node Function ---
 int main(int argc, char* argv[]) {
     g_node_id = generate_uuid(); // Generate unique ID for this node
-
+    g_node_ip = get_public_ip_address(); // Get public IP address of this node
     // Default node port (can be overridden by command line arg)
     g_node_port = 5001; 
     if (argc > 1) {
